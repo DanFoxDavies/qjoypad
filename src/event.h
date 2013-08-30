@@ -14,6 +14,8 @@ struct xevent {
 	eventType type;
 	int value1;	//button, keycode, or x
 	int value2; //y
+	int value3;
+	int value4;
 };
 
 

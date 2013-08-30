@@ -31,6 +31,9 @@ bool Button::read( QTextStream* stream ) {
 
     //go through every word on the line describing this button.
     for ( QStringList::Iterator it = words.begin(); it != words.end(); ++it ) {
+	keycode2 = 0;
+	keycode3 = 0;
+	keycode4 = 0;
         if (*it == "mouse") {
             ++it;
             if (it == words.end()) return false;
@@ -48,6 +51,34 @@ bool Button::read( QTextStream* stream ) {
             if (ok && val >= 0 && val <= MAXKEY) {
                 useMouse = false;
                 keycode = val;
+		// Hack the extra ones
+		++it;
+		if (it == words.end()){
+			--it;
+		}else{
+			val = (*it).toInt(&ok);
+			if (ok && val >= 0 && val <= MAXKEY) {
+				keycode2 = val;
+				++it;
+				if (it == words.end()){
+					--it;
+				}else{
+					val = (*it).toInt(&ok);
+					if (ok && val >= 0 && val <= MAXKEY) {
+						keycode3 = val;
+						++it;
+						if (it == words.end()){
+							--it;
+						}else{
+							val = (*it).toInt(&ok);
+							if (ok && val >= 0 && val <= MAXKEY) {
+								keycode4 = val;
+							}
+						}
+					}
+				}
+			}
+		}
             }
             else return false;
         }
@@ -169,7 +200,10 @@ void Button::click( bool press ) {
     else click.type = useMouse?BREL:KREL;
     //set up the event,
     click.value1 = useMouse?mousecode:keycode;
-    click.value2 = 0;
+    click.value2 = keycode2;
+    click.value3 = keycode3;
+    click.value4 = keycode4;
+printf("Keycodes - evalue1 %d, evalue2 %d, evalue 3 %d, evalue4 %d\n",keycode, keycode2, keycode3, keycode4);
     //and send it.
     sendevent( click );
 }

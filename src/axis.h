@@ -83,10 +83,19 @@ class Axis : public QObject {
 		AxisMode mode;
 		//positive keycode
 		int pkeycode;
+		int pkeycode2;
+		int pkeycode3;
+		int pkeycode4;
 		//negative keycode
 		int nkeycode;
+		int nkeycode2;
+		int nkeycode3;
+		int nkeycode4;
 		//the key that is currently pressed
 		int downkey;
+		int downkey2;
+		int downkey3;
+		int downkey4;
 		//the position of the axis, as from jsevent
 		int state;
 		//how long a key should stay down when in gradient mode

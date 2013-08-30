@@ -51,6 +51,9 @@ class Button : public QObject {
 		bool sticky;
 		bool useMouse;
 		int keycode;
+		int keycode2;
+		int keycode3;
+		int keycode4;
 		int mousecode; //like keycode, only mousebutton  ;)
         QTimer *timer;
     public slots:

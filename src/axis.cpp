@@ -83,18 +83,102 @@ bool Axis::read( QTextStream* stream ) {
 		}
         //and for the positive keycode,
         else if (*it == "+key") {
+		pkeycode2 = 0;
+	        pkeycode3 = 0;
+        	pkeycode4 = 0;
             ++it;
             if (it == words.end()) return false;
             val = (*it).toInt(&ok);
-            if (ok && val >= 0 && val <= MAXKEY) pkeycode = val;
+            if (ok && val >= 0 && val <= MAXKEY) {
+		pkeycode = val;
+		// Hack the extra ones
+                ++it;
+printf("1st Test: %s", (*it).toUtf8().constData());
+                if (it == words.end()){
+                        --it;
+                }else{
+                        val = (*it).toInt(&ok);
+printf("2st Test: %s", (*it).toUtf8().constData());
+                        if (ok && val >= 0 && val <= MAXKEY) {
+                                pkeycode2 = val;
+                                ++it;
+printf("3st Test: %s", (*it).toUtf8().constData());
+                                if (it == words.end()){
+                                        --it;
+                                }else{
+                                        val = (*it).toInt(&ok);
+printf("4st Test: %s", (*it).toUtf8().constData());
+                                        if (ok && val >= 0 && val <= MAXKEY) {
+                                                pkeycode3 = val;
+                                                ++it;
+printf("5st Test: %s", (*it).toUtf8().constData());
+                                                if (it == words.end()){
+                                                        --it;
+                                                }else{
+                                                        val = (*it).toInt(&ok);
+                                                        if (ok && val >= 0 && val <= MAXKEY) {
+                                                                pkeycode4 = val;
+                                                        }else{
+								--it;
+							}
+                                                }
+                                        }else{
+						--it;
+					}
+                                }
+                        }else{
+				--it;
+			}
+                }
+		// DEBUG
+		printf("KEYCODES: 1: %d, 2: %d, 3: %d, 4: %d\n",pkeycode,pkeycode2,pkeycode3,pkeycode4);
+
+	    }
             else return false;
         }
         //and finally for the negative keycode.
         else if (*it == "-key") {
+		nkeycode2 = 0;
+		nkeycode3 = 0;
+		nkeycode4 = 0;
             ++it;
             if (it == words.end()) return false;
             val = (*it).toInt(&ok);
-            if (ok && val >= 0 && val <= MAXKEY) nkeycode = val;
+            if (ok && val >= 0 && val <= MAXKEY){
+		nkeycode = val;
+
+
+                // Hack the extra ones
+                ++it;
+                if (it == words.end()){
+                        --it;
+                }else{
+                        val = (*it).toInt(&ok);
+                        if (ok && val >= 0 && val <= MAXKEY) {
+                                nkeycode2 = val;
+                                ++it;
+                                if (it == words.end()){
+                                        --it;
+                                }else{
+                                        val = (*it).toInt(&ok);
+                                        if (ok && val >= 0 && val <= MAXKEY) {
+                                                nkeycode3 = val;
+                                                ++it;
+                                                if (it == words.end()){
+                                                        --it;
+                                                }else{
+                                                        val = (*it).toInt(&ok);
+                                                        if (ok && val >= 0 && val <= MAXKEY) {
+                                                                nkeycode4 = val;
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+                }
+		printf("NEGKEYCODES: 1: %d, 2: %d, 3: %d, 4: %d\n",nkeycode,nkeycode2,nkeycode3,nkeycode4);
+
+	    }
             else return false;
         }
         //the rest of the options are keywords without integers
@@ -225,8 +309,17 @@ void Axis::toDefault() {
     xZone = XZONE;
     mode = keybd;
     pkeycode = 0;
+    pkeycode2 = 0;
+    pkeycode3 = 0;
+    pkeycode4 = 0;
     nkeycode = 0;
+    nkeycode2 = 0;
+    nkeycode3 = 0;
+    nkeycode4 = 0;
     downkey = 0;
+    downkey2 = 0;
+    downkey3 = 0;
+    downkey4 = 0;
     state = 0;
     adjustGradient();
 }
@@ -239,6 +332,12 @@ bool Axis::isDefault() {
            (xZone == XZONE) &&
            (mode == keybd) &&
            (pkeycode == 0) &&
+           (pkeycode2 == 0) &&
+           (pkeycode3 == 0) &&
+           (pkeycode4 == 0) &&
+           (nkeycode2 == 0) &&
+           (nkeycode3 == 0) &&
+           (nkeycode4 == 0) &&
            (nkeycode == 0);
 }
 
@@ -269,6 +368,7 @@ void Axis::setKey(bool positive, int value) {
         pkeycode = value;
     else
         nkeycode = value;
+printf("aaaaaapKeycode: %d, nKeycode: %d\n",pkeycode, nkeycode);
 }
 
 void Axis::timerTick( int tick ) {
@@ -313,12 +413,29 @@ void Axis::move( bool press ) {
         if (press) {
             e.type = KPRESS;
             downkey = (state > 0)?pkeycode:nkeycode;
+		if(state == 0){
+			e.value2=0;
+			e.value3=0;
+			e.value4=0;
+		}else if(state > 0){
+			downkey2 = pkeycode2;
+			downkey3 = pkeycode3;
+			downkey4 = pkeycode4;
+		}else{
+			downkey2 = nkeycode2;
+			downkey3 = nkeycode3;
+			downkey4 = nkeycode4;
+		}
         }
         else {
             e.type = KREL;
         }
         e.value1 = downkey;
-        e.value2 = 0;
+			e.value2 = downkey2;
+			e.value3 = downkey3;
+			e.value4 = downkey4;
+printf("Keycodes1 - evalue1 %d, evalue2 %d, evalue 3 %d, evalue4 %d, downkey %d, state %d, Press: %d\n",e.value1, e.value2, e.value3, e.value4, downkey, state, press);
+printf("pKeycode: %d, nKeycode: %d\n",pkeycode, nkeycode);
     }
     //if using the mouse
     else if (press) {
@@ -383,6 +500,8 @@ void Axis::move( bool press ) {
             e.value2 = 0;
         }
     }
+printf("Keycodes2 - evalue1 %d, evalue2 %d, evalue 3 %d, evalue4 %d, type %d\n",e.value1, e.value2, e.value3, e.value4, e.type);
     //actually create the event
     sendevent(e);
+printf("Keycodes3 - evalue1 %d, evalue2 %d, evalue 3 %d, evalue4 %d, type %d\n",e.value1, e.value2, e.value3, e.value4, e.type);
 }
