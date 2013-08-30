@@ -19,7 +19,7 @@ You can use the GUI to work out what numbers qjoypad assigns the letters on your
 The following is an example file, the first joypad section filled with comments which must all be removed except the first one for the file to work and the second joypad section left without them to show how the syntax is normally presented without the comments. Please note the numbers in this file do not work as an actual layout, they are mainly just random to make an example.
 
 ------------------------------------------------
-
+```
 # QJoyPad 4.1 Layout File
 
 # Do not save to this file from the GUI if # you are using more than one key command # # per button press.
@@ -99,13 +99,13 @@ Joystick 2 {
 	Button 18: key 10
 	Button 19: key 11
 }
-
+```
 ------------------------------------------------
 
 Please note that if it does not work when put together similar to Joystick 2 above, try it like this with 999s to fill the 'gaps' instead:
 
 ------------------------------------------------
-
+```
 # QJoyPad 4.1 Layout File
 
 Joystick 2 {
@@ -133,7 +133,7 @@ Joystick 2 {
 	Button 18: key 32
 	Button 19: key 33
 }
-
+```
 -------------------------------------------------
 
 Note that 999s are not required on the mouse ones (we didn't change those) and Buttons 18 and 19 don't exist (at least not on the outside) on my Sony PS2 controller.
